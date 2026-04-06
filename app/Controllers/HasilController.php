@@ -29,7 +29,11 @@ class HasilController extends BaseController
             'hasil' => $this->hasilModel->getRankedResults()
         ];
 
-        return view('hasil/index', $data);
+        return view('layouts/Layout', [
+            'title'        => $data['title'],
+            'breadcrumb'   => 'Hasil',
+            'content_view' => view('hasil/index', $data)
+        ]);
     }
 
     public function hitung()

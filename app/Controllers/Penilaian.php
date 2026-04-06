@@ -43,7 +43,7 @@ class Penilaian extends BaseController
         return view('layouts/Layout', [
             'title'        => $data['title'],
             'breadcrumb'   => $data['breadcrumb'],
-            'content_view' => view('penilaian', $data)
+            'content_view' => view('Penilaian', $data)
         ]);
     }
 

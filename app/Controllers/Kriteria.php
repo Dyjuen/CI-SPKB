@@ -9,7 +9,7 @@ class Kriteria extends BaseController
         return view('layouts/Layout', [
             'title'        => 'Kriteria & Bobot',
             'breadcrumb'   => 'Kriteria',
-            'content_view' => view('kriteria', [
+            'content_view' => view('Kriteria', [
                 'kriteria' => [] // nanti diisi dari model
             ])
         ]);
