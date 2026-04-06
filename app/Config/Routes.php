@@ -15,5 +15,3 @@ $routes->group('kriteria', function($routes) {
     $routes->put('(:num)', 'KriteriaController::update/$1');
     $routes->delete('(:num)', 'KriteriaController::delete/$1');
 });
-
-$routes->get('/', 'Login::index');
