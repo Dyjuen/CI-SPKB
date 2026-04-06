@@ -28,7 +28,11 @@ class Mahasiswa extends BaseController
 
     public function tambah()
     {
-        return view('mahasiswa/tambah');
+        return view('layouts/Layout', [
+            'title'        => 'Tambah Mahasiswa',
+            'breadcrumb'   => 'Tambah Mahasiswa',
+            'content_view' => view('mahasiswa/tambah')
+        ]);
     }
 
     public function simpan()

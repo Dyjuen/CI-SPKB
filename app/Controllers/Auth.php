@@ -23,7 +23,7 @@ class Auth extends BaseController
 
         if ($user) {
             session()->set('login', true);
-            return redirect()->to('/mahasiswa');
+            return redirect()->to('/dashboard');
         } else {
             return redirect()->back()->with('error', 'Login gagal');
         }
