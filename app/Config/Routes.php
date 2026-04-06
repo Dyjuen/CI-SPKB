@@ -15,3 +15,12 @@ $routes->group('kriteria', function($routes) {
     $routes->put('(:num)', 'KriteriaController::update/$1');
     $routes->delete('(:num)', 'KriteriaController::delete/$1');
 });
+// SAW Algorithm Routes
+$routes->get('hasil', 'HasilController::index');
+$routes->post('hitung', 'HasilController::hitung');
+
+// Penilaian Routes
+$routes->group('penilaian', function($routes) {
+    $routes->get('/', 'PenilaianController::index');
+    $routes->post('(:num)', 'PenilaianController::store/$1');
+});
