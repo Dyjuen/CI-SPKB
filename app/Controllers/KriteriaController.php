@@ -22,7 +22,7 @@ class KriteriaController extends BaseController
     public function index()
     {
         $data = [
-            'title'    => 'Daftar Kriteria',
+            'title'    => 'Manajemen Kriteria',
             'kriteria' => $this->kriteriaModel->findAll(),
         ];
 

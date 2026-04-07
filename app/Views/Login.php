@@ -254,7 +254,7 @@
       </div>
     <?php endif; ?>
 
-    <form action="<?= base_url('auth/proses_login') ?>" method="post">
+    <form action="<?= base_url('login') ?>" method="post">
       <?= csrf_field() /* CI4 */ /* CI3: pakai input hidden dari $this->security->get_csrf_token_name() */ ?>
       <div class="mb-3">
         <label class="form-label">Username</label>

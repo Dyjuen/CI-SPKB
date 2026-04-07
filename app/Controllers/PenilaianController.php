@@ -24,14 +24,14 @@ class PenilaianController extends BaseController
      */
     public function index()
     {
-        $mahasiswa = $this->mahasiswaModel->findAll();
-        $kriteria  = $this->kriteriaModel->findAll();
-        $scores    = $this->penilaianModel->findAll();
+        $mahasiswa = $this->mahasiswaModel->asArray()->findAll();
+        $kriteria  = $this->kriteriaModel->asArray()->findAll();
+        $scores    = $this->penilaianModel->asArray()->findAll();
 
         // Structure scores: [mahasiswa_id][kriteria_id] = nilai
         $mappedScores = [];
         foreach ($scores as $s) {
-            $mappedScores[$s->mahasiswa_id][$s->kriteria_id] = $s->nilai;
+            $mappedScores[$s['mahasiswa_id']][$s['kriteria_id']] = $s['nilai'];
         }
 
         return view('penilaian/index', [

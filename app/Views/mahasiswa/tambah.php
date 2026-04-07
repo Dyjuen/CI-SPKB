@@ -1,7 +1,6 @@
-<?php
-// views/mahasiswa/tambah.php
-// Form untuk menambah mahasiswa baru
-?>
+<?= $this->extend('layouts/Layout') ?>
+
+<?= $this->section('content') ?>
 
 <div class="card-glass">
   <div class="card-header">
@@ -28,26 +27,6 @@
           <input type="text" name="prodi" class="form-control" placeholder="Contoh: Teknik Informatika" required/>
         </div>
 
-        <div class="col-md-3">
-          <label class="form-label">Semester</label>
-          <select name="semester" class="form-select">
-            <option value="">Pilih</option>
-            <?php for($s=1;$s<=14;$s++): ?>
-              <option value="<?= $s ?>"><?= $s ?></option>
-            <?php endfor; ?>
-          </select>
-        </div>
-
-        <div class="col-md-3">
-          <label class="form-label">No. HP</label>
-          <input type="text" name="no_hp" class="form-control" placeholder="08xxxxxxxxxx"/>
-        </div>
-
-        <div class="col-12">
-          <label class="form-label">Alamat</label>
-          <textarea name="alamat" class="form-control" rows="2" placeholder="Alamat lengkap (opsional)"></textarea>
-        </div>
-
         <div class="col-12">
           <div class="d-flex gap-2 justify-content-end">
             <a href="<?= base_url('mahasiswa') ?>" class="btn btn-outline-secondary">
@@ -62,3 +41,5 @@
     </form>
   </div>
 </div>
+
+<?= $this->endSection() ?>

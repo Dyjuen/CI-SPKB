@@ -40,7 +40,7 @@ class PenilaianControllerTest extends CIUnitTestCase
             'updated_at'    => date('Y-m-d H:i:s'),
         ]);
 
-        $result = $this->get('/penilaian');
+        $result = $this->withSession(['login' => true])->get('/penilaian');
 
         $result->assertStatus(200);
         $result->assertSee('Input Nilai Mahasiswa');

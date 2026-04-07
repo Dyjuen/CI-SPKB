@@ -25,15 +25,12 @@ class HasilController extends BaseController
     public function index()
     {
         $data = [
-            'title' => 'Hasil Perhitungan SAW',
-            'hasil' => $this->hasilModel->getRankedResults()
+            'title'      => 'Hasil Perhitungan SAW',
+            'breadcrumb' => 'Hasil',
+            'hasil'      => $this->hasilModel->getRankedResults()
         ];
 
-        return view('layouts/Layout', [
-            'title'        => $data['title'],
-            'breadcrumb'   => 'Hasil',
-            'content_view' => view('hasil/index', $data)
-        ]);
+        return view('hasil/index', $data);
     }
 
     public function hitung()

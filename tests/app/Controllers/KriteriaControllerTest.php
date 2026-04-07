@@ -24,7 +24,7 @@ class KriteriaControllerTest extends CIUnitTestCase
      */
     public function testIndexShowsKriteriaList()
     {
-        $result = $this->get('/kriteria');
+        $result = $this->withSession(['login' => true])->get('/kriteria');
         $result->assertStatus(200);
         $result->assertSee('Manajemen Kriteria');
     }
@@ -40,7 +40,7 @@ class KriteriaControllerTest extends CIUnitTestCase
             'tipe'          => 'B',
         ];
 
-        $result = $this->post('/kriteria', $data);
+        $result = $this->withSession(['login' => true])->post('/kriteria', $data);
         $result->assertStatus(302);
         $result->assertSessionHas('success', 'Kriteria berhasil disimpan');
 
@@ -89,7 +89,7 @@ class KriteriaControllerTest extends CIUnitTestCase
         ]);
         $id = $this->db->insertID();
 
-        $result = $this->call('DELETE', "/kriteria/{$id}");
+        $result = $this->withSession(['login' => true])->call('DELETE', "/kriteria/{$id}");
 
         $result->assertStatus(302);
         $this->seeInDatabase('kriteria', ['id' => $id, 'deleted_at !=' => null]);
@@ -123,15 +123,15 @@ class KriteriaControllerTest extends CIUnitTestCase
     public function testStoreRejectsNamaValidation()
     {
         // 6. Empty
-        $result = $this->post('/kriteria', ['nama_kriteria' => '', 'bobot' => 0.5, 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => '', 'bobot' => 0.5, 'tipe' => 'B']);
         $result->assertSessionHas('error');
 
         // 7. Too short (min 3)
-        $result = $this->post('/kriteria', ['nama_kriteria' => 'AB', 'bobot' => 0.5, 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'AB', 'bobot' => 0.5, 'tipe' => 'B']);
         $result->assertSessionHas('error');
 
         // 8. Too long (max 100)
-        $result = $this->post('/kriteria', ['nama_kriteria' => str_repeat('A', 101), 'bobot' => 0.5, 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => str_repeat('A', 101), 'bobot' => 0.5, 'tipe' => 'B']);
         $result->assertSessionHas('error');
     }
 
@@ -141,19 +141,19 @@ class KriteriaControllerTest extends CIUnitTestCase
     public function testStoreRejectsBobotValidation()
     {
         // 9. Missing
-        $result = $this->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'tipe' => 'B']);
         $result->assertSessionHas('error');
 
         // 10. > 1
-        $result = $this->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 1.5, 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 1.5, 'tipe' => 'B']);
         $result->assertSessionHas('error');
 
         // 11. < 0
-        $result = $this->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => -0.1, 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => -0.1, 'tipe' => 'B']);
         $result->assertSessionHas('error');
 
         // 12. Non-numeric
-        $result = $this->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 'abc', 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 'abc', 'tipe' => 'B']);
         $result->assertSessionHas('error');
     }
 
@@ -163,11 +163,11 @@ class KriteriaControllerTest extends CIUnitTestCase
     public function testStoreRejectsTipeValidation()
     {
         // 13. Invalid
-        $result = $this->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 0.5, 'tipe' => 'X']);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 0.5, 'tipe' => 'X']);
         $result->assertSessionHas('error');
 
         // 14. Missing
-        $result = $this->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 0.5]);
+        $result = $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Valid Name', 'bobot' => 0.5]);
         $result->assertSessionHas('error');
     }
 
@@ -176,7 +176,7 @@ class KriteriaControllerTest extends CIUnitTestCase
      */
     public function testUpdateNonExistentRecord()
     {
-        $result = $this->call('PUT', "/kriteria/9999", ['nama_kriteria' => 'Test', 'bobot' => 0.5, 'tipe' => 'B']);
+        $result = $this->withSession(['login' => true])->call('PUT', "/kriteria/9999", ['nama_kriteria' => 'Test', 'bobot' => 0.5, 'tipe' => 'B']);
         
         $result->assertSessionHas('error');
     }
@@ -186,7 +186,7 @@ class KriteriaControllerTest extends CIUnitTestCase
      */
     public function testDeleteNonExistentRecord()
     {
-        $result = $this->call('DELETE', "/kriteria/9999");
+        $result = $this->withSession(['login' => true])->call('DELETE', "/kriteria/9999");
         
         $result->assertStatus(302);
     }
@@ -196,7 +196,7 @@ class KriteriaControllerTest extends CIUnitTestCase
      */
     public function testShowNonExistentRecordReturns404()
     {
-        $result = $this->get('/kriteria/9999/json');
+        $result = $this->withSession(['login' => true])->get('/kriteria/9999/json');
         $result->assertStatus(404);
     }
 
@@ -206,7 +206,7 @@ class KriteriaControllerTest extends CIUnitTestCase
     public function testBobotBoundaryZeroIsValid()
     {
         $data = ['nama_kriteria' => 'Zero Bobot', 'bobot' => 0.00, 'tipe' => 'B'];
-        $result = $this->post('/kriteria', $data);
+        $result = $this->withSession(['login' => true])->post('/kriteria', $data);
         $result->assertStatus(302);
         $this->seeInDatabase('kriteria', ['nama_kriteria' => 'Zero Bobot', 'bobot' => 0]);
     }
@@ -217,7 +217,7 @@ class KriteriaControllerTest extends CIUnitTestCase
     public function testBobotBoundaryOneIsValid()
     {
         $data = ['nama_kriteria' => 'One Bobot', 'bobot' => 1.00, 'tipe' => 'B'];
-        $result = $this->post('/kriteria', $data);
+        $result = $this->withSession(['login' => true])->post('/kriteria', $data);
         $result->assertStatus(302);
         $this->seeInDatabase('kriteria', ['nama_kriteria' => 'One Bobot', 'bobot' => 1]);
     }
@@ -227,8 +227,8 @@ class KriteriaControllerTest extends CIUnitTestCase
      */
     public function testDuplicateNamaCriteriaAllowed()
     {
-        $this->post('/kriteria', ['nama_kriteria' => 'Dua', 'bobot' => 0.5, 'tipe' => 'B']);
-        $this->post('/kriteria', ['nama_kriteria' => 'Dua', 'bobot' => 0.3, 'tipe' => 'C']);
+        $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Dua', 'bobot' => 0.5, 'tipe' => 'B']);
+        $this->withSession(['login' => true])->post('/kriteria', ['nama_kriteria' => 'Dua', 'bobot' => 0.3, 'tipe' => 'C']);
         
         $count = $this->db->table('kriteria')->where('nama_kriteria', 'Dua')->countAllResults();
         $this->assertEquals(2, $count);
