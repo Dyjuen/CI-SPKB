@@ -74,4 +74,29 @@ class MahasiswaControllerTest extends CIUnitTestCase
         $result->assertRedirectTo('/mahasiswa');
         $this->seeInDatabase('mahasiswa', ['id' => $id, 'deleted_at !=' => null]);
     }
+
+    /**
+     * Test pagination works when there are many students
+     */
+    public function testPaginationWorks()
+    {
+        // Insert 11 students to trigger pagination (limit 10)
+        $data = [];
+        for ($i = 1; $i <= 11; $i++) {
+            $data[] = [
+                'nim' => "NIM{$i}", 
+                'nama' => "Student {$i}", 
+                'prodi' => 'TI',
+                'created_at' => date('Y-m-d H:i:s'), 
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+        }
+        $this->db->table('mahasiswa')->insertBatch($data);
+
+        $result = $this->withSession(['login' => true])->get('/mahasiswa');
+        $result->assertStatus(200);
+        
+        // Assert we see the pagination control
+        $result->assertSee('nav aria-label="Page navigation"');
+    }
 }

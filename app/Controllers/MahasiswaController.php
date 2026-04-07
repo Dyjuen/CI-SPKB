@@ -8,7 +8,8 @@ class MahasiswaController extends BaseController
     public function index()
     {
         $model = new MahasiswaModel();
-        $data['mahasiswa'] = $model->asArray()->findAll();
+        $data['mahasiswa'] = $model->asArray()->paginate(10);
+        $data['pager'] = $model->pager;
         $data['title'] = 'Data Mahasiswa';
 
         return view('mahasiswa/index', $data);

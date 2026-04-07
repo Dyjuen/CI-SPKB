@@ -96,6 +96,13 @@
         </tbody>
       </table>
     </div>
+    
+    <!-- PAGINATION -->
+    <?php if(!empty($pager)): ?>
+      <div class="d-flex justify-content-end mt-3">
+        <?= $pager->links('default', 'bootstrap_full') ?>
+      </div>
+    <?php endif; ?>
 
     <div class="mt-3">
       <p style="font-size:.8rem;color:var(--muted);margin:0">

@@ -71,9 +71,9 @@
     </div>
 
     <!-- PAGINATION -->
-    <?php if(!empty($pagination)): ?>
+    <?php if(!empty($pager)): ?>
       <div class="d-flex justify-content-end mt-3">
-        <?= $pagination ?>
+        <?= $pager->links('default', 'bootstrap_full') ?>
       </div>
     <?php endif; ?>
 

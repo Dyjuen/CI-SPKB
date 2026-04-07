@@ -66,7 +66,7 @@
             <div style="font-size:.75rem;color:var(--muted)">Tidak Lulus</div>
           </div>
           <div style="text-align:center;padding:12px 24px;background:rgba(15,31,61,.06);border-radius:10px;border:1px solid rgba(15,31,61,.12)">
-            <div style="font-size:1.6rem;font-weight:700;color:var(--navy)"><?= count($hasil ?? []) ?></div>
+            <div style="font-size:1.6rem;font-weight:700;color:var(--navy)"><?= ($total_lulus ?? 0) + ($total_tidak_lulus ?? 0) ?></div>
             <div style="font-size:.75rem;color:var(--muted)">Total Peserta</div>
           </div>
         </div>
@@ -125,6 +125,14 @@
             </tbody>
           </table>
         </div>
+        
+        <!-- PAGINATION -->
+        <?php if(!empty($pager)): ?>
+          <div class="d-flex justify-content-end p-4 border-top" style="border-color:var(--border)!important">
+            <?= $pager->links('default', 'bootstrap_full') ?>
+          </div>
+        <?php endif; ?>
+
       </div>
     </div>
   </div>

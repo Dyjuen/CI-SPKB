@@ -113,4 +113,36 @@ class HasilControllerTest extends CIUnitTestCase
 
         $result->assertSessionHas('error', 'kriteria belum diisi sepenuhnya');
     }
+
+    /**
+     * Test pagination works when there are many results
+     */
+    public function testPaginationWorks()
+    {
+        // Insert 11 students and results
+        for ($i = 1; $i <= 11; $i++) {
+            $mhsId = $this->db->table('mahasiswa')->insert([
+                'nim' => "NIM{$i}", 
+                'nama' => "Student {$i}", 
+                'prodi' => 'TI',
+                'created_at' => date('Y-m-d H:i:s'), 
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+            $mhsId = $this->db->insertID();
+
+            $this->db->table('hasil')->insert([
+                'mahasiswa_id'     => $mhsId,
+                'nilai_preferensi' => 0.8,
+                'ranking'          => $i,
+                'created_at'       => date('Y-m-d H:i:s'),
+                'updated_at'       => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        $result = $this->withSession(['login' => true])->get('/hasil');
+        $result->assertStatus(200);
+        
+        // Assert we see the pagination control
+        $result->assertSee('nav aria-label="Page navigation"');
+    }
 }

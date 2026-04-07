@@ -24,9 +24,17 @@ class HasilController extends BaseController
 
     public function index()
     {
-        $hasil = $this->hasilModel->getRankedResults();
+        $hasil = $this->hasilModel
+                ->select('hasil.*, mahasiswa.nim, mahasiswa.nama, mahasiswa.prodi')
+                ->join('mahasiswa', 'mahasiswa.id = hasil.mahasiswa_id')
+                ->orderBy('ranking', 'ASC')
+                ->paginate(10);
+        
+        $pager = $this->hasilModel->pager;
         $batasLulus = \App\Models\HasilModel::PASSING_LIMIT;
-        $totalHasil = count($hasil);
+        
+        // Use total from pager if available
+        $totalHasil = $pager->getTotal();
 
         $data = [
             'title'             => 'Hasil Perhitungan SAW',
@@ -35,6 +43,7 @@ class HasilController extends BaseController
             'batas_lulus'       => $batasLulus,
             'total_lulus'       => min($totalHasil, $batasLulus),
             'total_tidak_lulus' => max(0, $totalHasil - $batasLulus),
+            'pager'             => $pager,
         ];
 
         return view('hasil/index', $data);

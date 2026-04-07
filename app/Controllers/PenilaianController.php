@@ -24,7 +24,7 @@ class PenilaianController extends BaseController
      */
     public function index()
     {
-        $mahasiswa = $this->mahasiswaModel->asArray()->findAll();
+        $mahasiswa = $this->mahasiswaModel->asArray()->paginate(10);
         $kriteria  = $this->kriteriaModel->asArray()->findAll();
         $scores    = $this->penilaianModel->asArray()->findAll();
 
@@ -39,6 +39,7 @@ class PenilaianController extends BaseController
             'mahasiswaList' => $mahasiswa,
             'kriteriaList'  => $kriteria,
             'scores'        => $mappedScores,
+            'pager'         => $this->mahasiswaModel->pager
         ]);
     }
 
