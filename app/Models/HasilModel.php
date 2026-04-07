@@ -6,6 +6,8 @@ use CodeIgniter\Model;
 
 class HasilModel extends Model
 {
+    public const PASSING_LIMIT = 10;
+
     protected $table            = 'hasil';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;

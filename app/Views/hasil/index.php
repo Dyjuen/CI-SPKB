@@ -58,11 +58,11 @@
         <!-- SUMMARY BADGE -->
         <div class="d-flex gap-3 p-4 border-bottom" style="border-color:var(--border)!important">
           <div style="text-align:center;padding:12px 24px;background:rgba(26,122,74,.08);border-radius:10px;border:1px solid rgba(26,122,74,.2)">
-            <div style="font-size:1.6rem;font-weight:700;color:var(--success)"><?= $batas_lulus ?? 5 ?></div>
+            <div style="font-size:1.6rem;font-weight:700;color:var(--success)"><?= $batas_lulus ?></div>
             <div style="font-size:.75rem;color:var(--muted)">Kuota Lulus</div>
           </div>
           <div style="text-align:center;padding:12px 24px;background:rgba(192,57,43,.07);border-radius:10px;border:1px solid rgba(192,57,43,.2)">
-            <div style="font-size:1.6rem;font-weight:700;color:var(--danger)"><?= max(0, count($hasil ?? []) - ($batas_lulus ?? 5)) ?></div>
+            <div style="font-size:1.6rem;font-weight:700;color:var(--danger)"><?= $total_tidak_lulus ?? 0 ?></div>
             <div style="font-size:.75rem;color:var(--muted)">Tidak Lulus</div>
           </div>
           <div style="text-align:center;padding:12px 24px;background:rgba(15,31,61,.06);border-radius:10px;border:1px solid rgba(15,31,61,.12)">
@@ -86,7 +86,7 @@
             <tbody>
               <?php if(!empty($hasil)): ?>
                 <?php foreach($hasil as $i => $h): ?>
-                <?php $lulus = ($h->ranking) <= ($batas_lulus ?? 5); ?>
+                <?php $lulus = ($h->ranking) <= $batas_lulus; ?>
                 <tr style="<?= $lulus ? 'background:rgba(26,122,74,.04)' : '' ?>">
                   <td>
                     <?php if($h->ranking == 1): ?>

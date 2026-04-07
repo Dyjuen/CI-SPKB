@@ -72,8 +72,8 @@
                 <td style="color:var(--muted);font-size:.82rem"><?= $r['nim'] ?></td>
                 <td class="text-end" style="font-weight:600;color:var(--navy)"><?= number_format($r['nilai_preferensi'],4) ?></td>
                 <td class="text-center">
-                  <span class="<?= ($i+1) <= ($total_lulus ?? 5) ? 'badge-lulus' : 'badge-tidak' ?>">
-                    <?= ($i+1) <= ($total_lulus ?? 5) ? 'Lulus' : 'Tidak Lulus' ?>
+                  <span class="<?= ($i+1) <= $total_lulus ? 'badge-lulus' : 'badge-tidak' ?>">
+                    <?= ($i+1) <= $total_lulus ? 'Lulus' : 'Tidak Lulus' ?>
                   </span>
                 </td>
               </tr>

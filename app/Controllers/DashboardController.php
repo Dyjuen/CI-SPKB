@@ -22,12 +22,12 @@ class DashboardController extends BaseController
 
         $rankedResults = $hasilModel->asArray()->getRankedResults() ?? [];
         $totalHasil = count($rankedResults);
-        $threshold = 5;
+        $threshold = \App\Models\HasilModel::PASSING_LIMIT;
 
         $data = [
             'total_mahasiswa'    => $mahasiswaModel->countAllResults(),
             'total_kriteria'     => $kriteriaModel->countAllResults(),
-            'top_ranking'        => array_slice($rankedResults, 0, 5),
+            'top_ranking'        => array_slice($rankedResults, 0, $threshold),
             'kriteria_list'      => $kriteriaModel->asArray()->findAll(),
             'total_lulus'        => min($totalHasil, $threshold),
             'total_tidak_lulus'  => max(0, $totalHasil - $threshold),

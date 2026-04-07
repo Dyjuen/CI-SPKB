@@ -24,10 +24,17 @@ class HasilController extends BaseController
 
     public function index()
     {
+        $hasil = $this->hasilModel->getRankedResults();
+        $batasLulus = \App\Models\HasilModel::PASSING_LIMIT;
+        $totalHasil = count($hasil);
+
         $data = [
-            'title'      => 'Hasil Perhitungan SAW',
-            'breadcrumb' => 'Hasil',
-            'hasil'      => $this->hasilModel->getRankedResults()
+            'title'             => 'Hasil Perhitungan SAW',
+            'breadcrumb'        => 'Hasil',
+            'hasil'             => $hasil,
+            'batas_lulus'       => $batasLulus,
+            'total_lulus'       => min($totalHasil, $batasLulus),
+            'total_tidak_lulus' => max(0, $totalHasil - $batasLulus),
         ];
 
         return view('hasil/index', $data);
