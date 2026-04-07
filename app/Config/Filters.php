@@ -15,6 +15,19 @@ use CodeIgniter\Filters\SecureHeaders;
 
 class Filters extends BaseFilters
 {
+    public function __construct()
+    {
+        if (ENVIRONMENT === 'testing') {
+            $csrfIndex = array_search('csrf', $this->globals['before']);
+            if ($csrfIndex !== false) {
+                unset($this->globals['before'][$csrfIndex]);
+            }
+            if (isset($this->globals['before']['auth'])) {
+                unset($this->globals['before']['auth']);
+            }
+        }
+        parent::__construct();
+    }
     /**
      * Configures aliases for Filter classes to
      * make reading things nicer and simpler.
@@ -34,6 +47,7 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'auth'          => \App\Filters\AuthFilter::class,
     ];
 
     /**
@@ -73,8 +87,9 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            // 'csrf',
+            'csrf',
             // 'invalidchars',
+            'auth' => ['except' => ['/', 'login']]
         ],
         'after' => [
             // 'honeypot',

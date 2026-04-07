@@ -370,7 +370,7 @@
         <span><?= session()->get('username') ?? 'Admin' ?></span>
       </div>
     </div>
-    <a href="<?= base_url('auth/logout') ?>" class="btn-logout">
+    <a href="<?= base_url('logout') ?>" class="btn-logout">
       <i class="bi bi-box-arrow-right"></i> Keluar
     </a>
   </div>
@@ -410,7 +410,7 @@
     <?php endif; ?> 
 
     <!-- CONTENT PLACEHOLDER — tiap halaman meng-include layout ini lalu inject kontennya -->
-    <?= $content_view ?? '' ?>
+    <?= $this->renderSection('content') ?>
 
   </div>
 </div>

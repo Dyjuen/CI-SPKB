@@ -1,8 +1,6 @@
-<?php
-// views/beasiswa/dashboard.php
-// Di controller: $this->load->view('beasiswa/layout', ['title'=>'Dashboard','content_view'=> ...])
-// Atau render langsung dengan extend layout
-?>
+<?= $this->extend('layouts/Layout') ?>
+
+<?= $this->section('content') ?>
 
 <!-- STAT CARDS -->
 <div class="row g-3 mb-4">
@@ -20,7 +18,7 @@
       <div class="stat-icon gold"><i class="bi bi-sliders"></i></div>
       <div>
         <h3><?= $total_kriteria ?? 0 ?></h3>
-        <p>Kriteria Penilaian</p>
+        <p>Total Kriteria</p>
       </div>
     </div>
   </div>
@@ -74,8 +72,8 @@
                 <td style="color:var(--muted);font-size:.82rem"><?= $r['nim'] ?></td>
                 <td class="text-end" style="font-weight:600;color:var(--navy)"><?= number_format($r['nilai_preferensi'],4) ?></td>
                 <td class="text-center">
-                  <span class="<?= $r['status'] == 'Lulus' ? 'badge-lulus' : 'badge-tidak' ?>">
-                    <?= $r['status'] ?>
+                  <span class="<?= ($i+1) <= ($total_lulus ?? 5) ? 'badge-lulus' : 'badge-tidak' ?>">
+                    <?= ($i+1) <= ($total_lulus ?? 5) ? 'Lulus' : 'Tidak Lulus' ?>
                   </span>
                 </td>
               </tr>
@@ -105,9 +103,12 @@
         <a href="<?= base_url('penilaian') ?>" class="btn-navy w-100 justify-content-center">
           <i class="bi bi-pencil-square"></i> Input Penilaian
         </a>
-        <a href="<?= base_url('hasil/hitung') ?>" class="btn-navy w-100 justify-content-center" style="background:var(--success)">
-          <i class="bi bi-calculator"></i> Hitung Ulang SAW
-        </a>
+        <form action="<?= base_url('hasil/hitung') ?>" method="post" class="m-0 p-0 w-100">
+          <?= csrf_field() ?>
+          <button type="submit" class="btn-navy w-100 justify-content-center" style="background:var(--success)">
+            <i class="bi bi-calculator"></i> Hitung Ulang SAW
+          </button>
+        </form>
       </div>
     </div>
 
@@ -123,10 +124,10 @@
               <?php foreach($kriteria_list as $k): ?>
               <tr>
                 <td style="font-size:.85rem"><?= $k['nama_kriteria'] ?></td>
-                <td class="text-end" style="font-weight:600;font-size:.85rem"><?= $k['bobot'] ?>%</td>
+                <td class="text-end" style="font-weight:600;font-size:.85rem"><?= number_format($k['bobot'] * 100, 0) ?>%</td>
                 <td class="text-center">
-                  <span style="font-size:.75rem;padding:3px 10px;border-radius:20px;background:<?= $k['tipe']=='benefit' ? 'rgba(26,122,74,.12)' : 'rgba(192,57,43,.1)' ?>;color:<?= $k['tipe']=='benefit' ? 'var(--success)' : 'var(--danger)' ?>">
-                    <?= ucfirst($k['tipe']) ?>
+                  <span style="font-size:.75rem;padding:3px 10px;border-radius:20px;background:<?= $k['tipe']=='B' ? 'rgba(26,122,74,.12)' : 'rgba(192,57,43,.1)' ?>;color:<?= $k['tipe']=='B' ? 'var(--success)' : 'var(--danger)' ?>">
+                    <?= $k['tipe'] == 'B' ? 'Benefit' : 'Cost' ?>
                   </span>
                 </td>
               </tr>
@@ -140,3 +141,5 @@
     </div>
   </div>
 </div>
+
+<?= $this->endSection() ?>

@@ -7,22 +7,23 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // Auth Routes
-$routes->get('/', 'Auth::index');
-$routes->post('/login', 'Auth::login');
-$routes->get('/logout', 'Auth::logout');
+$routes->get('/', 'AuthController::index');
+$routes->get('/login', 'AuthController::login');
+$routes->post('/login', 'AuthController::authenticate');
+$routes->get('/logout', 'AuthController::logout');
 
 // Dashboard Routes
-$routes->get('/dashboard', 'Dashboard::index');
+$routes->get('/dashboard', 'DashboardController::index');
 
 // Mahasiswa CRUD Routes
-$routes->get('/mahasiswa', 'Mahasiswa::index');
-$routes->get('/mahasiswa/tambah', 'Mahasiswa::tambah');
-$routes->post('/mahasiswa/simpan', 'Mahasiswa::simpan');
-$routes->get('/mahasiswa/delete/(:num)', 'Mahasiswa::delete/$1');
+$routes->get('/mahasiswa', 'MahasiswaController::index');
+$routes->get('/mahasiswa/tambah', 'MahasiswaController::tambah');
+$routes->post('/mahasiswa/simpan', 'MahasiswaController::simpan');
+$routes->get('/mahasiswa/delete/(:num)', 'MahasiswaController::delete/$1');
 
 // Kriteria CRUD Routes
-$routes->group('kriteria', function($routes) {
-    $routes->get('/', 'Kriteria::index');
+$routes->group('/kriteria', function ($routes) {
+    $routes->get('/', 'KriteriaController::index');
     $routes->post('/', 'KriteriaController::store');
     $routes->get('(:num)/json', 'KriteriaController::show/$1');
     $routes->put('(:num)', 'KriteriaController::update/$1');
@@ -30,8 +31,8 @@ $routes->group('kriteria', function($routes) {
 });
 
 // Penilaian Routes
-$routes->get('/penilaian', 'Penilaian::index');
-$routes->post('/penilaian/simpan', 'Penilaian::simpan');
+$routes->get('/penilaian', 'PenilaianController::index');
+$routes->post('/penilaian/(:num)', 'PenilaianController::store/$1');
 
 // Hasil Routes
 $routes->get('/hasil', 'HasilController::index');

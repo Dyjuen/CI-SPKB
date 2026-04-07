@@ -1,7 +1,6 @@
-<?php
-// views/beasiswa/mahasiswa.php
-// Menampilkan daftar mahasiswa + modal tambah/edit
-?>
+<?= $this->extend('layouts/Layout') ?>
+
+<?= $this->section('content') ?>
 
 <div class="card-glass">
   <div class="card-header">
@@ -31,8 +30,6 @@
             <th>NIM</th>
             <th>Nama Lengkap</th>
             <th>Program Studi</th>
-            <th>Semester</th>
-            <th>No. HP</th>
             <th class="text-center" style="width:130px">Aksi</th>
           </tr>
         </thead>
@@ -44,8 +41,6 @@
               <td style="font-family:monospace;font-weight:500"><?= $m['nim'] ?></td>
               <td style="font-weight:500"><?= $m['nama'] ?></td>
               <td style="font-size:.84rem;color:var(--muted)"><?= $m['prodi'] ?></td>
-              <td class="text-center"><?= $m['semester'] ?></td>
-              <td style="font-size:.84rem"><?= $m['no_hp'] ?? '-' ?></td>
               <td class="text-center">
                 <div class="d-flex gap-1 justify-content-center">
                   <button class="btn btn-outline-secondary btn-sm"
@@ -53,7 +48,7 @@
                           title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <a href="<?= base_url('mahasiswa/hapus/'.$m['id']) ?>"
+                  <a href="<?= base_url('mahasiswa/delete/'.$m['id']) ?>"
                      class="btn btn-outline-danger btn-sm"
                      onclick="return confirm('Hapus mahasiswa ini?')"
                      title="Hapus">
@@ -65,7 +60,7 @@
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="7" class="text-center py-5" style="color:var(--muted)">
+              <td colspan="4" class="text-center py-5" style="color:var(--muted)">
                 <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:8px"></i>
                 Belum ada data mahasiswa
               </td>
@@ -110,23 +105,6 @@
             <label class="form-label">Program Studi <span style="color:red">*</span></label>
             <input type="text" name="prodi" class="form-control" placeholder="Contoh: Teknik Informatika" required/>
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Semester <span style="color:red">*</span></label>
-            <select name="semester" class="form-select" required>
-              <option value="">Pilih</option>
-              <?php for($s=1;$s<=14;$s++): ?>
-                <option value="<?= $s ?>"><?= $s ?></option>
-              <?php endfor; ?>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">No. HP</label>
-            <input type="text" name="no_hp" class="form-control" placeholder="08xxxxxxxxxx"/>
-          </div>
-          <div class="col-12">
-            <label class="form-label">Alamat</label>
-            <textarea name="alamat" class="form-control" rows="2" placeholder="Alamat lengkap (opsional)"></textarea>
-          </div>
         </div>
       </div>
       <div class="modal-footer border-top" style="border-color:var(--border)!important">
@@ -164,22 +142,6 @@
             <label class="form-label">Program Studi <span style="color:red">*</span></label>
             <input type="text" name="prodi" id="edit_prodi" class="form-control" required/>
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Semester <span style="color:red">*</span></label>
-            <select name="semester" id="edit_semester" class="form-select" required>
-              <?php for($s=1;$s<=14;$s++): ?>
-                <option value="<?= $s ?>"><?= $s ?></option>
-              <?php endfor; ?>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">No. HP</label>
-            <input type="text" name="no_hp" id="edit_no_hp" class="form-control"/>
-          </div>
-          <div class="col-12">
-            <label class="form-label">Alamat</label>
-            <textarea name="alamat" id="edit_alamat" class="form-control" rows="2"></textarea>
-          </div>
         </div>
       </div>
       <div class="modal-footer border-top" style="border-color:var(--border)!important">
@@ -198,9 +160,6 @@ function editMahasiswa(data) {
   document.getElementById('edit_nim').value      = data.nim;
   document.getElementById('edit_nama').value     = data.nama;
   document.getElementById('edit_prodi').value    = data.prodi;
-  document.getElementById('edit_semester').value = data.semester;
-  document.getElementById('edit_no_hp').value    = data.no_hp    ?? '';
-  document.getElementById('edit_alamat').value   = data.alamat   ?? '';
   new bootstrap.Modal(document.getElementById('modalEdit')).show();
 }
 
@@ -211,3 +170,5 @@ function filterTable() {
   });
 }
 </script>
+
+<?= $this->endSection() ?>
