@@ -25,7 +25,8 @@ class MahasiswaModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'nim'   => 'required|is_unique[mahasiswa.nim]|numeric|min_length[5]|max_length[20]',
+        'id'    => 'permit_empty|is_natural_no_zero',
+        'nim'   => 'required|is_unique[mahasiswa.nim,id,{id}]|numeric|min_length[5]|max_length[20]',
         'nama'  => 'required|min_length[3]|max_length[100]',
         'prodi' => 'required|max_length[100]',
     ];

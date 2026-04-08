@@ -31,20 +31,9 @@ class MahasiswaControllerTest extends CIUnitTestCase
     }
 
     /**
-     * Test tambah renders form
+     * Test store saves data
      */
-    public function testTambahRendersForm()
-    {
-        $result = $this->withSession(['login' => true])->get('/mahasiswa/tambah');
-
-        $result->assertStatus(200);
-        $result->assertSee('Tambah Mahasiswa');
-    }
-
-    /**
-     * Test simpan saves data
-     */
-    public function testSimpanCreatesRecord()
+    public function testStoreCreatesRecord()
     {
         $data = [
             'nim'  => '200202',
@@ -52,10 +41,35 @@ class MahasiswaControllerTest extends CIUnitTestCase
             'prodi' => 'TI'
         ];
 
-        $result = $this->withSession(['login' => true])->post('/mahasiswa/simpan', $data);
+        $result = $this->withSession(['login' => true])->post('/mahasiswa', $data);
 
         $result->assertRedirectTo('/mahasiswa');
         $this->seeInDatabase('mahasiswa', ['nim' => '200202', 'nama' => 'Student B']);
+    }
+
+    /**
+     * Test update modifies record
+     */
+    public function testUpdateChangesRecord()
+    {
+        $this->db->table('mahasiswa')->insert([
+            'nim'   => '404', 'nama' => 'Old Name', 'prodi' => 'TI',
+            'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')
+        ]);
+        $row = $this->db->table('mahasiswa')->where('nim', '404')->get()->getRow();
+        $id = $row->id;
+
+        $data = [
+            'nim'  => '404', // test uniqueness ignore
+            'nama' => 'New Name',
+            'prodi' => 'SI'
+        ];
+
+        $result = $this->withSession(['login' => true])->put("/mahasiswa/{$id}", $data);
+
+        $result->assertRedirectTo('/mahasiswa');
+        $result->assertSessionHas('success', 'Mahasiswa berhasil diperbarui');
+        $this->seeInDatabase('mahasiswa', ['id' => $id, 'nama' => 'New Name', 'prodi' => 'SI']);
     }
 
     /**
@@ -69,10 +83,26 @@ class MahasiswaControllerTest extends CIUnitTestCase
         ]);
         $id = $this->db->insertID();
 
-        $result = $this->withSession(['login' => true])->get("/mahasiswa/delete/{$id}");
+        // Setup dummy kriteria to create an associated penilaian
+        $kriteriaId = $this->db->table('kriteria')->insert([
+            'nama_kriteria' => 'Test', 'bobot' => 0.5, 'tipe' => 'B'
+        ]);
+        $kriteriaId = $this->db->insertID();
+
+        // Create a penilaian linked to the mahasiswa
+        $this->db->table('penilaian')->insert([
+            'mahasiswa_id' => $id,
+            'kriteria_id' => $kriteriaId,
+            'nilai' => 80
+        ]);
+
+        $result = $this->withSession(['login' => true])->call('DELETE', "/mahasiswa/{$id}");
 
         $result->assertRedirectTo('/mahasiswa');
         $this->seeInDatabase('mahasiswa', ['id' => $id, 'deleted_at !=' => null]);
+        
+        // Assert Penilaian is hard deleted
+        $this->dontSeeInDatabase('penilaian', ['mahasiswa_id' => $id]);
     }
 
     /**

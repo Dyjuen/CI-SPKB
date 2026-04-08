@@ -16,10 +16,13 @@ $routes->get('/logout', 'AuthController::logout');
 $routes->get('/dashboard', 'DashboardController::index');
 
 // Mahasiswa CRUD Routes
-$routes->get('/mahasiswa', 'MahasiswaController::index');
-$routes->get('/mahasiswa/tambah', 'MahasiswaController::tambah');
-$routes->post('/mahasiswa/simpan', 'MahasiswaController::simpan');
-$routes->get('/mahasiswa/delete/(:num)', 'MahasiswaController::delete/$1');
+$routes->group('/mahasiswa', function ($routes) {
+    $routes->get('tambah', 'MahasiswaController::tambah');
+    $routes->get('/', 'MahasiswaController::index');
+    $routes->post('/', 'MahasiswaController::store');
+    $routes->put('(:num)', 'MahasiswaController::update/$1');
+    $routes->delete('(:num)', 'MahasiswaController::delete/$1');
+});
 
 // Kriteria CRUD Routes
 $routes->group('/kriteria', function ($routes) {

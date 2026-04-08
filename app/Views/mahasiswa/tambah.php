@@ -8,7 +8,7 @@
   </div>
 
   <div class="card-body">
-    <form action="<?= base_url('mahasiswa/simpan') ?>" method="post">
+    <form action="<?= base_url('mahasiswa') ?>" method="post">
       <?= csrf_field() ?>
       
       <div class="row g-3">

@@ -59,7 +59,7 @@
                             title="Edit">
                       <i class="bi bi-pencil"></i>
                     </button>
-                    <form action="<?= base_url('kriteria/delete/'.$k->id) ?>" method="post" style="display:inline" onsubmit="return confirm('Hapus kriteria ini?')">
+                    <form action="<?= base_url('kriteria/'.$k->id) ?>" method="post" style="display:inline" onsubmit="return confirm('Hapus kriteria ini?')">
                       <?= csrf_field() ?>
                       <input type="hidden" name="_method" value="DELETE">
                       <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus">
@@ -147,7 +147,7 @@
         <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Tambah Kriteria</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <form action="<?= base_url('kriteria/simpan') ?>" method="post">
+      <form action="<?= base_url('kriteria') ?>" method="post">
         <?= csrf_field() ?>
       <div class="modal-body">
         <div class="row g-3">
@@ -189,9 +189,9 @@
         <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Edit Kriteria</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <form action="<?= base_url('kriteria/update') ?>" method="post">
+      <form id="formEditKriteria" method="post">
         <?= csrf_field() ?>
-      <input type="hidden" name="id" id="ek_id"/>
+        <input type="hidden" name="_method" value="PUT">
       <div class="modal-body">
         <div class="row g-3">
         <div class="row g-3">
@@ -224,7 +224,7 @@
 
 <script>
 function editKriteria(d) {
-  document.getElementById('ek_id').value          = d.id;
+  document.getElementById('formEditKriteria').action = '<?= base_url('kriteria') ?>/' + d.id;
   document.getElementById('ek_nama').value        = d.nama_kriteria;
   document.getElementById('ek_bobot').value       = d.bobot;
   document.getElementById('ek_tipe').value        = d.tipe;

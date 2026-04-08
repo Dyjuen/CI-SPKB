@@ -48,12 +48,13 @@
                           title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <a href="<?= base_url('mahasiswa/delete/'.$m['id']) ?>"
-                     class="btn btn-outline-danger btn-sm"
-                     onclick="return confirm('Hapus mahasiswa ini?')"
-                     title="Hapus">
-                    <i class="bi bi-trash"></i>
-                  </a>
+                  <form action="<?= base_url('mahasiswa/'.$m['id']) ?>" method="post" style="display:inline" onsubmit="return confirm('Hapus mahasiswa ini beserta nilai yang terkait?')">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
                 </div>
               </td>
             </tr>
@@ -89,7 +90,7 @@
         <h5 class="modal-title"><i class="bi bi-person-plus-fill me-2"></i>Tambah Mahasiswa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <form action="<?= base_url('mahasiswa/simpan') ?>" method="post">
+      <form action="<?= base_url('mahasiswa') ?>" method="post">
         <?= csrf_field() ?>
       <div class="modal-body">
         <div class="row g-3">
@@ -125,9 +126,9 @@
         <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Edit Mahasiswa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <form action="<?= base_url('mahasiswa/update') ?>" method="post">
+      <form id="formEditMahasiswa" method="post">
         <?= csrf_field() ?>
-      <input type="hidden" name="id" id="edit_id"/>
+        <input type="hidden" name="_method" value="PUT">
       <div class="modal-body">
         <div class="row g-3">
           <div class="col-md-6">
@@ -156,7 +157,7 @@
 
 <script>
 function editMahasiswa(data) {
-  document.getElementById('edit_id').value       = data.id;
+  document.getElementById('formEditMahasiswa').action = '<?= base_url('mahasiswa') ?>/' + data.id;
   document.getElementById('edit_nim').value      = data.nim;
   document.getElementById('edit_nama').value     = data.nama;
   document.getElementById('edit_prodi').value    = data.prodi;
