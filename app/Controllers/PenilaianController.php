@@ -49,35 +49,47 @@ class PenilaianController extends BaseController
     public function store($mahasiswaId)
     {
         $kriteriaList = $this->kriteriaModel->findAll();
-        $rules = [];
-        $messages = [];
 
+        // Detect JSON body (sent by the AJAX fetch in the view)
+        $isJson = strpos($this->request->getHeaderLine('Content-Type'), 'application/json') !== false;
+        if ($isJson) {
+            $jsonBody   = $this->request->getJSON(true); // decode as array
+            $inputNilai = $jsonBody['nilai'] ?? [];
+        } else {
+            $inputNilai = $this->request->getVar('nilai') ?? [];
+        }
+
+        // Build validation rules manually so we can validate $inputNilai regardless of source
+        $rules    = [];
+        $messages = [];
         foreach ($kriteriaList as $k) {
-            $field = "nilai.{$k->id}";
-            $rules[$field] = 'required|numeric';
+            $field          = "nilai.{$k->id}";
+            $rules[$field]  = 'required|numeric';
             $messages[$field] = [
                 'required' => "Nilai untuk kriteria {$k->nama_kriteria} harus diisi.",
                 'numeric'  => "Nilai untuk kriteria {$k->nama_kriteria} harus berupa angka.",
             ];
         }
 
-        if (!$this->validate($rules, $messages)) {
-            if ($this->request->isAJAX()) {
+        // Validate the normalised data array (works for both JSON and form payloads)
+        $validation = \Config\Services::validation();
+        $validation->setRules($rules, $messages);
+
+        if (!$validation->run(['nilai' => $inputNilai])) {
+            if ($this->request->isAJAX() || $isJson) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Validasi gagal.',
-                    'errors'  => $this->validator->getErrors(),
+                    'errors'  => $validation->getErrors(),
                     'csrf'    => csrf_hash()
                 ]);
             }
 
             return redirect()->back()
                 ->withInput()
-                ->with('errors', $this->validator->getErrors())
-                ->with('error_mhs_id', $mahasiswaId); // To know which row has errors
+                ->with('errors', $validation->getErrors())
+                ->with('error_mhs_id', $mahasiswaId);
         }
-
-        $inputNilai = $this->request->getVar('nilai');
 
         foreach ($inputNilai as $kriteriaId => $nilai) {
             $this->penilaianModel->upsertScore((int)$mahasiswaId, (int)$kriteriaId, (float)$nilai);

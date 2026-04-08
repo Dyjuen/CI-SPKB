@@ -154,7 +154,7 @@
         <div class="row g-3">
           <div class="col-md-12">
             <label class="form-label">Nama Kriteria <span style="color:red">*</span></label>
-            <input type="text" name="nama_kriteria" class="form-control" placeholder="Nama kriteria" required/>
+            <input type="text" name="nama_kriteria" class="form-control" placeholder="Nama kriteria" minlength="3" maxlength="100" required/>
           </div>
           <div class="col-md-6">
             <label class="form-label">Bobot (0.00 - 1.00) <span style="color:red">*</span></label>
@@ -197,7 +197,7 @@
         <div class="row g-3">
           <div class="col-md-12">
             <label class="form-label">Nama Kriteria</label>
-            <input type="text" name="nama_kriteria" id="ek_nama" class="form-control" required/>
+            <input type="text" name="nama_kriteria" id="ek_nama" class="form-control" minlength="3" maxlength="100" required/>
           </div>
           <div class="col-md-6">
             <label class="form-label">Bobot (0.00 - 1.00)</label>

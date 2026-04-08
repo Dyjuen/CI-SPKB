@@ -60,9 +60,14 @@
         </thead>
         <tbody>
           <?php if(!empty($mahasiswaList)): ?>
+            <?php
+              $perPage     = $pager ? $pager->getPageCount() > 0 ? 10 : 10 : 10;
+              $currentPage = $pager ? $pager->getCurrentPage() : 1;
+              $offset      = ($currentPage - 1) * $perPage;
+            ?>
             <?php foreach($mahasiswaList as $i => $m): ?>
             <tr data-mhs-id="<?= $m['id'] ?>">
-              <td><?= $i+1 ?></td>
+              <td><?= $offset + $i + 1 ?></td>
               <td style="font-family:monospace;font-size:.84rem"><?= $m['nim'] ?></td>
               <td style="font-weight:500"><?= $m['nama'] ?></td>
               <?php if(!empty($kriteriaList)): ?>
@@ -74,7 +79,8 @@
                            class="form-control text-center nilai-input"
                            value="<?= $scores[$m['id']][$k['id']] ?? '' ?>"
                            placeholder="0"
-                           style="max-width:110px;margin:0 auto;text-align:center"/>
+                           style="max-width:110px;margin:0 auto;text-align:center"
+                           required/>
                   </td>
                 <?php endforeach; ?>
               <?php endif; ?>

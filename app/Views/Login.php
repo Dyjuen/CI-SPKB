@@ -263,6 +263,7 @@
           <input type="text" name="username" class="form-control"
                  placeholder="Masukkan username"
                  value="<?= isset($old_username) ? htmlspecialchars($old_username) : '' ?>"
+                 minlength="3" maxlength="50"
                  required autocomplete="username"/>
         </div>
       </div>
@@ -272,6 +273,7 @@
           <i class="bi bi-lock icon"></i>
           <input type="password" name="password" class="form-control"
                  placeholder="Masukkan password"
+                 minlength="6" maxlength="255"
                  required autocomplete="current-password"/>
         </div>
       </div>
