@@ -6,6 +6,9 @@ use App\Models\MahasiswaModel;
 use App\Models\KriteriaModel;
 use App\Models\PenilaianModel;
 
+/**
+ * PenilaianController mengelola proses pengisian nilai setiap mahasiswa terhadap kriteria yang ada.
+ */
 class PenilaianController extends BaseController
 {
     protected $mahasiswaModel;
@@ -20,7 +23,9 @@ class PenilaianController extends BaseController
     }
 
     /**
-     * Show the scoring grid.
+     * Menampilkan tabel penilaian (grid).
+     * Memetakan skor dari database ke dalam struktur array [mahasiswa_id][kriteria_id] 
+     * agar mudah ditampilkan dalam bentuk tabel matriks di view.
      */
     public function index()
     {
@@ -28,7 +33,8 @@ class PenilaianController extends BaseController
         $kriteria  = $this->kriteriaModel->asArray()->findAll();
         $scores    = $this->penilaianModel->asArray()->findAll();
 
-        // Structure scores: [mahasiswa_id][kriteria_id] = nilai
+        // Menyusun skor: [mahasiswa_id][kriteria_id] = nilai
+        // Struktur ini mempermudah pencarian nilai saat looping baris mahasiswa dan kolom kriteria
         $mappedScores = [];
         foreach ($scores as $s) {
             $mappedScores[$s['mahasiswa_id']][$s['kriteria_id']] = $s['nilai'];
@@ -44,22 +50,23 @@ class PenilaianController extends BaseController
     }
 
     /**
-     * Save scores for a specific candidate.
+     * Menyimpan nilai-nilai kriteria untuk mahasiswa tertentu.
+     * Mendukung input via form standar maupun AJAX (JSON).
      */
     public function store($mahasiswaId)
     {
         $kriteriaList = $this->kriteriaModel->findAll();
 
-        // Detect JSON body (sent by the AJAX fetch in the view)
+        // Mendeteksi apakah request dikirim dalam format JSON (biasanya oleh fetch API di frontend)
         $isJson = strpos($this->request->getHeaderLine('Content-Type'), 'application/json') !== false;
         if ($isJson) {
-            $jsonBody   = $this->request->getJSON(true); // decode as array
+            $jsonBody   = $this->request->getJSON(true); // Decode menjadi array
             $inputNilai = $jsonBody['nilai'] ?? [];
         } else {
             $inputNilai = $this->request->getVar('nilai') ?? [];
         }
 
-        // Build validation rules manually so we can validate $inputNilai regardless of source
+        // Membangun aturan validasi secara dinamis berdasarkan jumlah kriteria yang ada
         $rules    = [];
         $messages = [];
         foreach ($kriteriaList as $k) {
@@ -71,11 +78,12 @@ class PenilaianController extends BaseController
             ];
         }
 
-        // Validate the normalised data array (works for both JSON and form payloads)
+        // Menjalankan validasi secara manual menggunakan service validation CodeIgniter
         $validation = \Config\Services::validation();
         $validation->setRules($rules, $messages);
 
         if (!$validation->run(['nilai' => $inputNilai])) {
+            // Jika request adalah AJAX/JSON, kembalikan respons error dalam format JSON beserta CSRF hash baru
             if ($this->request->isAJAX() || $isJson) {
                 return $this->response->setJSON([
                     'success' => false,
@@ -91,10 +99,12 @@ class PenilaianController extends BaseController
                 ->with('error_mhs_id', $mahasiswaId);
         }
 
+        // Menyimpan atau memperbarui nilai menggunakan method upsert di model
         foreach ($inputNilai as $kriteriaId => $nilai) {
             $this->penilaianModel->upsertScore((int)$mahasiswaId, (int)$kriteriaId, (float)$nilai);
         }
 
+        // Mengembalikan respons sukses sesuai tipe request
         if ($this->request->isAJAX()) {
             return $this->response->setJSON([
                 'success' => true,

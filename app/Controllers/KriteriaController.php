@@ -5,6 +5,10 @@ namespace App\Controllers;
 use App\Models\KriteriaModel;
 use CodeIgniter\API\ResponseTrait;
 
+/**
+ * KriteriaController mengelola data kriteria yang digunakan dalam perhitungan SAW.
+ * Setiap kriteria memiliki bobot dan tipe (Benefit/Cost).
+ */
 class KriteriaController extends BaseController
 {
     use ResponseTrait;
@@ -17,7 +21,7 @@ class KriteriaController extends BaseController
     }
 
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar kriteria yang tersedia.
      */
     public function index()
     {
@@ -30,7 +34,8 @@ class KriteriaController extends BaseController
     }
 
     /**
-     * Return a single record as JSON for AJAX pre-fill.
+     * Mengambil data satu kriteria dalam format JSON.
+     * Digunakan untuk proses edit (pre-fill form) melalui AJAX.
      */
     public function show($id = null)
     {
@@ -44,7 +49,8 @@ class KriteriaController extends BaseController
     }
 
     /**
-     * Create a new resource object from user input.
+     * Menyimpan data kriteria baru ke database.
+     * Melakukan validasi input sesuai aturan yang didefinisikan di KriteriaModel.
      */
     public function store()
     {
@@ -68,7 +74,8 @@ class KriteriaController extends BaseController
     }
 
     /**
-     * Update an existing resource.
+     * Memperbarui data kriteria yang sudah ada.
+     * Memastikan data yang akan diupdate memang tersedia di database.
      */
     public function update($id = null)
     {
@@ -78,7 +85,7 @@ class KriteriaController extends BaseController
             return redirect()->back()->withInput()->with('error', $this->validator->listErrors());
         }
 
-        // Existence check for Bug #2 (Option A)
+        // Cek keberadaan data untuk menghindari update pada record yang sudah tidak ada
         if (!$this->kriteriaModel->find($id)) {
             return redirect()->back()->withInput()->with('error', 'Kriteria tidak ditemukan');
         }
@@ -97,7 +104,7 @@ class KriteriaController extends BaseController
     }
 
     /**
-     * Delete an existing resource.
+     * Menghapus data kriteria berdasarkan ID.
      */
     public function delete($id = null)
     {

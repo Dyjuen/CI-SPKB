@@ -4,8 +4,15 @@ namespace App\Controllers;
 use App\Models\MahasiswaModel;
 use App\Models\PenilaianModel;
 
+/**
+ * MahasiswaController mengelola data profil mahasiswa.
+ * Data ini menjadi entitas utama yang akan dinilai dalam sistem pendukung keputusan.
+ */
 class MahasiswaController extends BaseController
 {
+    /**
+     * Menampilkan daftar mahasiswa dengan sistem pagination untuk performa aplikasi.
+     */
     public function index()
     {
         $model = new MahasiswaModel();
@@ -16,12 +23,19 @@ class MahasiswaController extends BaseController
         return view('mahasiswa/index', $data);
     }
 
+    /**
+     * Menampilkan form untuk menambah data mahasiswa baru.
+     */
     public function tambah()
     {
         $data['title'] = 'Tambah Mahasiswa Baru';
         return view('mahasiswa/tambah', $data);
     }
 
+    /**
+     * Menyimpan data mahasiswa baru ke database.
+     * Secara otomatis memvalidasi input berdasarkan rules di MahasiswaModel.
+     */
     public function store()
     {
         $model = new MahasiswaModel();
@@ -38,6 +52,9 @@ class MahasiswaController extends BaseController
         return redirect()->back()->withInput()->with('error', $errors ? implode(', ', $errors) : 'Gagal menyimpan mahasiswa');
     }
 
+    /**
+     * Memperbarui data profil mahasiswa yang sudah ada.
+     */
     public function update($id = null)
     {
         $model = new MahasiswaModel();
@@ -57,12 +74,16 @@ class MahasiswaController extends BaseController
         return redirect()->back()->withInput()->with('error', $errors ? implode(', ', $errors) : 'Gagal memperbarui mahasiswa');
     }
 
+    /**
+     * Menghapus data mahasiswa dan data penilaian terkait.
+     * Penghapusan penilaian dilakukan secara manual (cascade) untuk menjaga konsistensi data.
+     */
     public function delete($id = null)
     {
         $model = new MahasiswaModel();
         
         if ($model->delete($id)) {
-            // Cascade delete correlated penilaian
+            // Menghapus semua penilaian yang terikat dengan mahasiswa ini agar tidak ada data sampah (orphan records)
             $penilaianModel = new PenilaianModel();
             $penilaianModel->where('mahasiswa_id', $id)->delete();
 

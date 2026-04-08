@@ -4,6 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+/**
+ * UserModel mengelola data pengguna/administrator sistem.
+ */
 class UserModel extends Model
 {
     protected $table            = 'users';
@@ -23,9 +26,10 @@ class UserModel extends Model
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+    // Aturan validasi untuk akun pengguna
     protected $validationRules      = [
         'username' => 'required|is_unique[users.username]|min_length[3]|max_length[50]',
+        // Password harus memiliki panjang minimal 6 karakter untuk keamanan dasar
         'password' => 'required|min_length[6]|max_length[255]',
     ];
     protected $validationMessages   = [];
@@ -44,7 +48,8 @@ class UserModel extends Model
     protected $afterDelete    = [];
 
     /**
-     * Find user by username
+     * Mencari data pengguna berdasarkan username.
+     * Digunakan pada proses otentikasi login.
      *
      * @param string $username
      * @return object|null

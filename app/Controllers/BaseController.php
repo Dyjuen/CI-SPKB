@@ -8,38 +8,28 @@ use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * BaseController provides a convenient place for loading components
- * and performing functions that are needed by all your controllers.
- *
- * Extend this class in any new controllers:
- * ```
- *     class Home extends BaseController
- * ```
- *
- * For security, be sure to declare any new methods as protected or private.
+ * BaseController menyediakan tempat yang nyaman untuk memuat komponen
+ * dan menjalankan fungsi yang diperlukan oleh semua kontroler.
+ * Semua kontroler baru harus mewarisi (extend) kelas ini.
  */
 abstract class BaseController extends Controller
 {
     /**
-     * Be sure to declare properties for any property fetch you initialized.
-     * The creation of dynamic property is deprecated in PHP 8.2.
+     * Inisialisasi properti untuk kompatibilitas PHP 8.2+.
      */
 
     // protected $session;
 
     /**
-     * @return void
+     * initController dipanggil secara otomatis oleh framework saat kontroler mulai dijalankan.
+     * Digunakan untuk memuat helper, model, atau library yang dibutuhkan secara global.
      */
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
-        // Load here all helpers you want to be available in your controllers that extend BaseController.
-        // Caution: Do not put the this below the parent::initController() call below.
-        // $this->helpers = ['form', 'url'];
-
-        // Caution: Do not edit this line.
+        // Panggil initController dari parent agar proses inisialisasi framework berjalan normal
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
+        // Tambahkan helper atau library yang sering digunakan di sini.
         // $this->session = service('session');
     }
 }

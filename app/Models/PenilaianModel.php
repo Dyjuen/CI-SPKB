@@ -4,6 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+/**
+ * PenilaianModel mengelola data skor/nilai setiap mahasiswa untuk setiap kriteria.
+ */
 class PenilaianModel extends Model
 {
     protected $table            = 'penilaian';
@@ -23,7 +26,7 @@ class PenilaianModel extends Model
     protected $updatedField  = 'updated_at';
     protected $deletedField  = '';
 
-    // Validation
+    // Aturan validasi untuk memastikan relasi data mahasiswa dan kriteria benar
     protected $validationRules      = [
         'mahasiswa_id' => 'required|is_not_unique[mahasiswa.id]',
         'kriteria_id'  => 'required|is_not_unique[kriteria.id]',
@@ -45,7 +48,9 @@ class PenilaianModel extends Model
     protected $afterDelete    = [];
 
     /**
-     * Upsert score for a student per criterion
+     * Menyimpan atau memperbarui nilai mahasiswa per kriteria.
+     * Jika data sudah ada, maka nilai akan diperbarui (update).
+     * Jika data belum ada, maka data baru akan ditambahkan (insert).
      *
      * @param int $mahasiswa_id
      * @param int $kriteria_id
@@ -54,17 +59,18 @@ class PenilaianModel extends Model
      */
     public function upsertScore(int $mahasiswa_id, int $kriteria_id, float $nilai)
     {
-        // CodeIgniter 4's replace() works like INSERT OR REPLACE
-        // To handle ON DUPLICATE KEY UPDATE with current timestamps, we'll find existing or insert
+        // Mencari apakah sudah ada penilaian untuk kombinasi mahasiswa dan kriteria ini
         $existing = $this->where([
             'mahasiswa_id' => $mahasiswa_id,
             'kriteria_id'  => $kriteria_id,
         ])->first();
 
         if ($existing) {
+            // Jika ada, lakukan update pada baris tersebut
             return $this->update($existing->id, ['nilai' => $nilai]);
         }
 
+        // Jika tidak ada, buat baris penilaian baru
         return $this->insert([
             'mahasiswa_id' => $mahasiswa_id,
             'kriteria_id'  => $kriteria_id,
@@ -73,7 +79,7 @@ class PenilaianModel extends Model
     }
 
     /**
-     * Get all scores formatted for SAW calculation matrix
+     * Mengambil semua data skor untuk digunakan dalam pembentukan matriks SAW.
      *
      * @return array
      */

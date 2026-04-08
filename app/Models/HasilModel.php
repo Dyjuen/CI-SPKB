@@ -4,9 +4,13 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+/**
+ * HasilModel menyimpan dan mengelola data hasil perankingan SAW.
+ */
 class HasilModel extends Model
 {
-    public const PASSING_LIMIT = 10;
+    // Batas jumlah mahasiswa yang dianggap lulus/diterima
+    public const PASSING_LIMIT = 5;
 
     protected $table            = 'hasil';
     protected $primaryKey       = 'id';
@@ -18,14 +22,14 @@ class HasilModel extends Model
 
     protected bool $allowEmptyInserts = false;
 
-    // Dates
+    // Pengaturan waktu otomatis (created_at, updated_at)
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = '';
 
-    // Validation
+    // Aturan validasi untuk menjamin integritas data sebelum masuk ke database
     protected $validationRules      = [
         'mahasiswa_id'     => 'required|is_not_unique[mahasiswa.id]',
         'nilai_preferensi' => 'required|numeric',
@@ -47,7 +51,8 @@ class HasilModel extends Model
     protected $afterDelete    = [];
 
     /**
-     * Get results with ranking and student info
+     * Mengambil data hasil perankingan lengkap dengan informasi profil mahasiswa.
+     * Join dilakukan untuk mendapatkan NIM dan Nama Mahasiswa.
      *
      * @return array
      */

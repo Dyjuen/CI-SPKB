@@ -7,6 +7,9 @@ use App\Models\MahasiswaModel;
 use App\Models\KriteriaModel;
 use App\Models\PenilaianModel;
 
+/**
+ * HasilController menangani perolehan dan perhitungan hasil akhir menggunakan metode SAW.
+ */
 class HasilController extends BaseController
 {
     protected $hasilModel;
@@ -22,6 +25,10 @@ class HasilController extends BaseController
         $this->penilaianModel = new PenilaianModel();
     }
 
+    /**
+     * Menampilkan halaman index hasil perhitungan.
+     * Mengambil data hasil perankingan yang sudah dihitung dan menyajikannya dengan pagination.
+     */
     public function index()
     {
         $hasil = $this->hasilModel
@@ -33,7 +40,7 @@ class HasilController extends BaseController
         $pager = $this->hasilModel->pager;
         $batasLulus = \App\Models\HasilModel::PASSING_LIMIT;
         
-        // Use total from pager if available
+        // Menggunakan total dari pager jika tersedia untuk menghitung jumlah lulus/tidak lulus
         $totalHasil = $pager->getTotal();
 
         $data = [
@@ -49,18 +56,23 @@ class HasilController extends BaseController
         return view('hasil/index', $data);
     }
 
+    /**
+     * Menjalankan proses perhitungan metode SAW (Simple Additive Weighting).
+     * Langkah-langkah meliputi validasi data, pembentukan matriks keputusan, normalisasi, dan perankingan.
+     */
     public function hitung()
     {
         $mahasiswaList = $this->mahasiswaModel->findAll();
         $kriteriaList  = $this->kriteriaModel->findAll();
         $penilaianList = $this->penilaianModel->findAll();
 
+        // Cek ketersediaan data dasar sebelum memulai perhitungan
         if (empty($mahasiswaList) || empty($kriteriaList)) {
             return redirect()->back()->with('error', 'Data mahasiswa atau kriteria masih kosong.');
         }
 
-        // --- Step 0: Validation (Check if all criteria are filled for each student) ---
-        // Group penilaian by mahasiswa_id
+        // --- Langkah 0: Validasi (Pastikan semua kriteria sudah terisi untuk setiap mahasiswa) ---
+        // Mengelompokkan data penilaian berdasarkan ID mahasiswa
         $scoresByMhs = [];
         foreach ($penilaianList as $p) {
             $scoresByMhs[$p->mahasiswa_id][] = $p->kriteria_id;
@@ -69,12 +81,14 @@ class HasilController extends BaseController
         $totalKriteria = count($kriteriaList);
         foreach ($mahasiswaList as $m) {
             $mhsScores = isset($scoresByMhs[$m->id]) ? $scoresByMhs[$m->id] : [];
+            // Jika ada mahasiswa yang belum memiliki penilaian lengkap, proses dihentikan
             if (count($mhsScores) < $totalKriteria) {
                 return redirect()->back()->with('error', 'kriteria belum diisi sepenuhnya');
             }
         }
 
-        // --- Step 1: Build Decision Matrix (X) ---
+        // --- Langkah 1: Membentuk Matriks Keputusan (X) ---
+        // Matriks ini berisi nilai asli setiap mahasiswa untuk setiap kriteria
         $matrix = [];
         $scoresMap = [];
         foreach ($penilaianList as $p) {
@@ -87,7 +101,8 @@ class HasilController extends BaseController
             }
         }
 
-        // --- Step 2: Normalization (R) ---
+        // --- Langkah 2: Normalisasi Matriks (R) ---
+        // Menyesuaikan nilai berdasarkan tipe kriteria (Benefit atau Cost)
         $normalized = [];
         foreach ($kriteriaList as $k) {
             $colValues = array_column($matrix, $k->id);
@@ -98,16 +113,19 @@ class HasilController extends BaseController
                 $val = $matrix[$m->id][$k->id];
                 
                 if ($k->tipe === 'B') {
-                    // Benefit: r_ij = x_ij / max(x_j)
+                    // Benefit: Nilai tertinggi adalah yang terbaik
+                    // r_ij = x_ij / max(x_j)
                     $normalized[$m->id][$k->id] = ($maxVal == 0) ? 0 : $val / $maxVal;
                 } else {
-                    // Cost: r_ij = min(x_j) / x_ij
+                    // Cost: Nilai terendah adalah yang terbaik
+                    // r_ij = min(x_j) / x_ij
                     $normalized[$m->id][$k->id] = ($val == 0) ? 0 : $minVal / $val;
                 }
             }
         }
 
-        // --- Step 3: Preference Value (V) ---
+        // --- Langkah 3: Menghitung Nilai Preferensi (V) ---
+        // Mengalikan bobot kriteria dengan nilai yang sudah dinormalisasi
         $vScores = [];
         foreach ($mahasiswaList as $m) {
             $v = 0;
@@ -117,11 +135,13 @@ class HasilController extends BaseController
             $vScores[$m->id] = $v;
         }
 
-        // --- Step 4: Save & Rank ---
+        // --- Langkah 4: Simpan & Perankingan ---
+        // Mengurutkan hasil dari yang terbesar ke terkecil
         arsort($vScores);
         
+        // Menggunakan transaksi untuk memastikan integritas data saat mengganti hasil lama dengan yang baru
         $this->hasilModel->db->transStart();
-        $this->hasilModel->truncate(); // Clear old results
+        $this->hasilModel->truncate(); // Menghapus data hasil lama
         
         $rank = 1;
         foreach ($vScores as $mId => $score) {
